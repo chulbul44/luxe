@@ -136,8 +136,8 @@ export default function AdminProducts() {
                                         <p className="text-sm font-bold text-gray-900">₹{product.price}</p>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <p className={`text-sm font-medium ${product.countInStock > 5 ? "text-gray-900" : "text-red-600"}`}>
-                                            {product.countInStock}
+                                        <p className={`text-sm font-medium ${(product.countInStock ?? 0) > 5 ? "text-gray-900" : "text-red-600"}`}>
+                                            {product.countInStock ?? 0}
                                         </p>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
