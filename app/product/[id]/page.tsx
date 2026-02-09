@@ -103,6 +103,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     const product = PRODUCTS.find((p) => p.id === Number(id)) || PRODUCTS[0];
 
     const [selectedSize, setSelectedSize] = useState("M");
+    const [quantity, setQuantity] = useState(1);
 
     const handleAddToCart = () => {
         alert(`Added ${quantity} x ${product.title} (Size: ${selectedSize}) to cart!`);

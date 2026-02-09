@@ -15,6 +15,27 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    isAdmin: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    phone: {
+        type: String,
+        default: "",
+    },
+    address: {
+        street: { type: String, default: "" },
+        city: { type: String, default: "" },
+        state: { type: String, default: "" },
+        pinCode: { type: String, default: "" },
+    },
+    bankDetails: {
+        accountHolder: { type: String, default: "" },
+        accountNumber: { type: String, default: "" },
+        ifscCode: { type: String, default: "" },
+        bankName: { type: String, default: "" },
+    },
 }, { timestamps: true });
 
 // Hash password before saving

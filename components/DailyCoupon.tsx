@@ -21,7 +21,7 @@ export default function DailyCoupon() {
         // Select coupon based on the day of the month
         const dayOfMonth = new Date().getDate();
         const index = dayOfMonth % COUPONS.length;
-        setCoupon(COUPONS[index]);
+        setTimeout(() => setCoupon(COUPONS[index]), 0);
 
         const timer = setInterval(() => {
             const now = new Date();
@@ -61,7 +61,7 @@ export default function DailyCoupon() {
                         <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left space-y-4 max-w-lg">
                             <div className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase">
                                 <Sparkles className="w-3 h-3" />
-                                Today's Special Deal
+                                Today&apos;s Special Deal
                             </div>
                             <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight">
                                 {coupon.discount} <br />

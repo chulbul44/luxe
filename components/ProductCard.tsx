@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { ShoppingCart, Eye, Heart } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 interface ProductProps {
-    id: number;
+    id: string;
     image: string;
     title: string;
     price: number;
@@ -14,10 +15,25 @@ interface ProductProps {
 }
 
 export default function ProductCard({ id, image, title, price, originalPrice, discount, tag }: ProductProps) {
+    const { addToCart } = useCart();
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart({
+            id,
+            title,
+            price,
+            image,
+            size: "M", // Default size since it's a card
+            quantity: 1
+        });
+    };
+
     return (
         <Link href={`/product/${id}`} className="block group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl border border-transparent hover:border-gray-100">
             {/* Image Container */}
-            <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+            <div className="relative aspect-square overflow-hidden bg-gray-100">
 
                 {/* Placeholder for Next/Image - Using a div with background for demo simplicity, but structure ready for Image */}
                 <div
@@ -40,17 +56,26 @@ export default function ProductCard({ id, image, title, price, originalPrice, di
                 </div>
 
                 {/* Wishlist Button */}
-                <button className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-gray-500 hover:text-red-500 hover:bg-white transition-colors shadow-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 duration-300">
+                <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-gray-500 hover:text-red-500 hover:bg-white transition-colors shadow-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 duration-300"
+                >
                     <Heart className="w-4 h-4" />
                 </button>
 
                 {/* Quick Action Overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2 pb-6">
-                    <button className="flex-1 bg-white text-gray-900 py-2.5 rounded-lg font-medium text-sm hover:bg-black hover:text-white transition-colors shadow-lg flex justify-center items-center gap-2">
+                    <button
+                        onClick={handleAddToCart}
+                        className="flex-1 bg-white text-gray-900 py-2.5 rounded-lg font-medium text-sm hover:bg-black hover:text-white transition-colors shadow-lg flex justify-center items-center gap-2"
+                    >
                         <ShoppingCart className="w-4 h-4" />
                         Add to Cart
                     </button>
-                    <button className="p-2.5 bg-white text-gray-900 rounded-lg hover:bg-black hover:text-white transition-colors shadow-lg">
+                    <button
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                        className="p-2.5 bg-white text-gray-900 rounded-lg hover:bg-black hover:text-white transition-colors shadow-lg"
+                    >
                         <Eye className="w-4 h-4" />
                     </button>
                 </div>
