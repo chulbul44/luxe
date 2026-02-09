@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { Search, ShoppingBag, Heart, User, Menu, X } from "lucide-react";
+import { Search, ShoppingBag, Heart, User, Menu, X, ShieldAlert } from "lucide-react";
 
 const navLinks = [
     { name: "Home", href: "/" },
@@ -16,7 +16,16 @@ const navLinks = [
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { cartCount, setIsCartOpen } = useCart();
+    const [isAdmin, setIsAdmin] = useState(false);
+    const { cartCount, setIsCartOpen, isMounted } = useCart();
+
+    useEffect(() => {
+        if (!isMounted) return;
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        if (user.isAdmin) {
+            setTimeout(() => setIsAdmin(true), 0);
+        }
+    }, [isMounted]);
 
     return (
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100">
@@ -42,6 +51,15 @@ export default function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
+                        {isAdmin && (
+                            <Link
+                                href="/admin"
+                                className="flex items-center gap-1.5 text-sm font-bold text-gray-900 bg-pink-50 px-3 py-1.5 rounded-full border border-pink-100 hover:bg-pink-100 transition-all"
+                            >
+                                <ShieldAlert className="w-4 h-4 text-pink-600" />
+                                Admin Panel
+                            </Link>
+                        )}
                     </div>
 
                     {/* Right Section: Search & Icons */}
@@ -64,17 +82,17 @@ export default function Navbar() {
                                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-pink-500 rounded-full hidden group-hover:block animate-ping" />
                             </button>
                             <button
-                                onClick={() => setIsMobileMenuOpen(false) || setIsCartOpen(true)}
-                                className="hover:text-pink-500 transition-colors relative group"
+                                onClick={() => setIsCartOpen(true)}
+                                className="p-2 text-gray-600 hover:text-pink-600 transition-colors relative"
                             >
-                                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-pink-500 text-white text-[10px] flex items-center justify-center rounded-full animate-bounce-subtle border border-white">
+                                <ShoppingBag className="w-6 h-6" />
+                                {isMounted && cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
                                         {cartCount}
                                     </span>
                                 )}
                             </button>
-                            <Link href="/login" className="hidden sm:block hover:text-pink-500 transition-colors">
+                            <Link href="/profile" className="hidden sm:block hover:text-pink-500 transition-colors">
                                 <User className="w-5 h-5 sm:w-6 sm:h-6" />
                             </Link>
                         </div>
@@ -138,14 +156,24 @@ export default function Navbar() {
                                     </div>
                                 </Link>
                             ))}
+                            {isAdmin && (
+                                <Link
+                                    href="/admin"
+                                    className="flex items-center gap-3 px-4 py-3 bg-pink-50 text-pink-600 rounded-xl font-bold border border-pink-100 mt-2"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <ShieldAlert className="w-5 h-5 text-pink-600" />
+                                    <span className="font-bold">Admin Panel</span>
+                                </Link>
+                            )}
                         </div>
 
                         <div className="mt-8 border-t border-gray-100 pt-6">
-                            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl">
+                            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl" onClick={() => setIsMobileMenuOpen(false)}>
                                 <User className="w-5 h-5" />
                                 <span className="font-medium">My Profile</span>
                             </Link>
-                            <Link href="/wishlist" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl">
+                            <Link href="/wishlist" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl" onClick={() => setIsMobileMenuOpen(false)}>
                                 <Heart className="w-5 h-5" />
                                 <span className="font-medium">Wishlist</span>
                             </Link>

@@ -2,7 +2,7 @@ import ProductCard from "./ProductCard";
 
 const PRODUCTS = [
     {
-        id: 1,
+        id: "1",
         title: "Floral Georgette Maxi Dress",
         price: 1499,
         originalPrice: 2999,
@@ -11,7 +11,7 @@ const PRODUCTS = [
         tag: "Best Seller"
     },
     {
-        id: 2,
+        id: "2",
         title: "Embroidered Cotton Kurti Set",
         price: 899,
         originalPrice: 1599,
@@ -20,7 +20,7 @@ const PRODUCTS = [
         tag: "New"
     },
     {
-        id: 3,
+        id: "3",
         title: "Classic White Sneakers",
         price: 2499,
         originalPrice: 3500,
@@ -28,7 +28,7 @@ const PRODUCTS = [
         image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=2590&auto=format&fit=crop",
     },
     {
-        id: 4,
+        id: "4",
         title: "Silk Blend Banarasi Saree",
         price: 3999,
         originalPrice: 7999,
@@ -37,7 +37,7 @@ const PRODUCTS = [
         tag: "Premium"
     },
     {
-        id: 5,
+        id: "5",
         title: "Denim Jacket with Patches",
         price: 1999,
         originalPrice: 2500,
@@ -45,14 +45,14 @@ const PRODUCTS = [
         image: "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=2670&auto=format&fit=crop",
     },
     {
-        id: 6,
+        id: "6",
         title: "Rose Gold Plated Watch",
         price: 2999,
         originalPrice: 5999,
         image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=2599&auto=format&fit=crop",
     },
     {
-        id: 7,
+        id: "7",
         title: "Slim Fit Chinos - Beige",
         price: 1299,
         originalPrice: 1999,
@@ -60,7 +60,7 @@ const PRODUCTS = [
         image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=2574&auto=format&fit=crop",
     },
     {
-        id: 8,
+        id: "8",
         title: "Boho Chic Tote Bag",
         price: 799,
         originalPrice: 1299,
@@ -87,7 +87,7 @@ export default function ProductSection() {
                     {PRODUCTS.map((product) => (
                         <ProductCard
                             key={product.id}
-                            id={product.id}
+                            id={product.id.toString()}
                             image={product.image}
                             title={product.title}
                             price={product.price}

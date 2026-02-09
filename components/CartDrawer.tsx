@@ -60,7 +60,7 @@ export default function CartDrawer() {
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-gray-900">Your cart is empty</h3>
-                                <p className="text-gray-500 text-sm mt-1">Looks like you haven't added anything yet.</p>
+                                <p className="text-gray-500 text-sm mt-1">Looks like you haven&apos;t added anything yet.</p>
                             </div>
                             <button
                                 onClick={() => setIsCartOpen(false)}

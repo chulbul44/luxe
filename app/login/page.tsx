@@ -27,14 +27,24 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                // Store token in localStorage
+                // Store token and user info in localStorage
                 localStorage.setItem("token", data.token);
-                localStorage.setItem("user", JSON.stringify({ name: data.name, email: data.email }));
+                localStorage.setItem("user", JSON.stringify({
+                    _id: data._id,
+                    name: data.name,
+                    email: data.email,
+                    isAdmin: data.isAdmin
+                }));
 
                 alert("Login Successful! Welcome back, " + data.name);
-                // Redirect to home page
+
+                // Redirect to admin dashboard if admin, otherwise home
                 setTimeout(() => {
-                    window.location.href = "/";
+                    if (data.isAdmin) {
+                        window.location.href = "/admin";
+                    } else {
+                        window.location.href = "/";
+                    }
                 }, 1000);
             } else {
                 alert("Login Failed: " + (data.message || "Unknown error"));
@@ -126,7 +136,7 @@ export default function LoginPage() {
 
                     <div className="mt-8 text-center">
                         <p className="text-sm text-gray-500">
-                            Don't have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <Link href="/signup" className="text-pink-600 font-bold hover:underline">
                                 Create Account
                             </Link>

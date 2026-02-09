@@ -26,8 +26,8 @@ export default function Footer() {
                         <h3 className="text-gray-900 font-semibold mb-6">Shop</h3>
                         <ul className="space-y-3 text-sm text-gray-500">
                             <FooterLink>New Arrivals</FooterLink>
-                            <FooterLink>Women's Collection</FooterLink>
-                            <FooterLink>Men's Collection</FooterLink>
+                            <FooterLink>Women&apos;s Collection</FooterLink>
+                            <FooterLink>Men&apos;s Collection</FooterLink>
                             <FooterLink>Accessories</FooterLink>
                             <FooterLink>Sale & Offers</FooterLink>
                         </ul>
@@ -80,7 +80,7 @@ export default function Footer() {
     );
 }
 
-function SocialIcon({ Icon }: { Icon: any }) {
+function SocialIcon({ Icon }: { Icon: React.ElementType }) {
     return (
         <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-pink-50 hover:text-pink-500 transition-all duration-300">
             <Icon className="w-5 h-5" />
