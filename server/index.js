@@ -23,6 +23,7 @@ const Cart = require("./models/Cart");
 const Product = require("./models/Product");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key_change_me";
 
@@ -119,6 +120,73 @@ app.post("/api/login", async (req, res) => {
         } else {
             res.status(401).json({ success: false, message: "Invalid email or password" });
         }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Forgot Password - generate reset token
+app.post("/api/forgot-password", async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email is required" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found with this email" });
+        }
+
+        const resetToken = crypto.randomBytes(3).toString("hex").toUpperCase();
+        const hashedResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+        user.resetPasswordToken = hashedResetToken;
+        user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 min
+        await user.save();
+
+        // In production, send this token via email/SMS.
+        res.json({
+            success: true,
+            message: "Reset token generated. Token valid for 10 minutes.",
+            resetToken,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Reset Password using token
+app.post("/api/reset-password", async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    try {
+        if (!token || !newPassword) {
+            return res.status(400).json({ success: false, message: "Token and new password are required" });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+        }
+
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        const user = await User.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid or expired reset token" });
+        }
+
+        user.password = newPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.json({ success: true, message: "Password reset successful. Please login." });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -249,6 +317,76 @@ app.get("/api/admin/stats", protect, admin, async (req, res) => {
                 orders: 0 // Placeholder
             }
         });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Admin - Get all users
+app.get("/api/admin/users", protect, admin, async (req, res) => {
+    try {
+        const users = await User.find({})
+            .select("-password -resetPasswordToken -resetPasswordExpires")
+            .sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            users,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Admin - Update user role
+app.put("/api/admin/users/:id/role", protect, admin, async (req, res) => {
+    try {
+        const { isAdmin } = req.body;
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Prevent accidental removal of own admin role.
+        if (req.user._id.toString() === user._id.toString() && isAdmin === false) {
+            return res.status(400).json({ success: false, message: "You cannot remove your own admin access" });
+        }
+
+        user.isAdmin = Boolean(isAdmin);
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "User role updated",
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                createdAt: user.createdAt,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Admin - Delete user
+app.delete("/api/admin/users/:id", protect, admin, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Prevent deleting currently logged-in admin account.
+        if (req.user._id.toString() === user._id.toString()) {
+            return res.status(400).json({ success: false, message: "You cannot delete your own account" });
+        }
+
+        await user.deleteOne();
+        res.json({ success: true, message: "User deleted successfully" });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

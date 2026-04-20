@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
 
 export default function AdminSetup() {
     const [status, setStatus] = useState("");
@@ -19,7 +18,6 @@ export default function AdminSetup() {
 
     return (
         <main className="min-h-screen bg-gray-50">
-            <Navbar />
             <div className="max-w-md mx-auto mt-20 p-8 bg-white rounded-3xl shadow-xl text-center space-y-6">
                 <h1 className="text-2xl font-bold text-gray-900">Admin Setup (Testing Only)</h1>
                 <p className="text-gray-500 text-sm">Use this button to promote your current session to Admin status for testing the panel.</p>

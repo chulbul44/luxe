@@ -16,15 +16,22 @@ import {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+    const [userName, setUserName] = useState("Admin User");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-        if (user.isAdmin) {
-            setTimeout(() => setIsAdmin(true), 0);
-        } else {
+        try {
+            const user = JSON.parse(localStorage.getItem("user") || "{}");
+            if (user?.isAdmin) {
+                setUserName(user.name || "Admin User");
+                setTimeout(() => setIsAdmin(true), 0);
+            } else {
+                router.push("/login");
+            }
+        } catch (error) {
+            console.error("Invalid admin user data:", error);
             router.push("/login");
         }
     }, [router]);
@@ -111,11 +118,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                     <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
-                            <p className="text-sm font-bold text-gray-900">Admin User</p>
+                            <p className="text-sm font-bold text-gray-900">{userName}</p>
                             <p className="text-xs text-gray-500">Super Admin</p>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                            A
+                            {userName?.charAt(0)?.toUpperCase() || "A"}
                         </div>
                     </div>
                 </header>

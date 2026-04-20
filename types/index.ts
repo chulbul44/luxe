@@ -12,5 +12,4 @@ export interface Product {
     rating?: number;
     reviews?: number;
     countInStock?: number;
-    _id: string; // Ensure _id is consistently defined
 }
